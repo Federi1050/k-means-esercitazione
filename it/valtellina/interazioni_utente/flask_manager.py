@@ -1,5 +1,3 @@
-from urllib import response
-
 import pandas as pd
 from flask import Flask, jsonify, request, render_template_string
 from io import BytesIO
@@ -73,14 +71,16 @@ class FlaskManager():  # è una classe INTERFACCIA
 
         @self.app.route('/show_data', methods=['POST'])
         def dataset_show():
-            input = response.get_json()
+            input = request.get_json()
             numero = input.get('numero')
             if numero is None:
                 risposta = self.ds_mg.stampa_dataset()
             else:
-                risposta = self.ds_mg.stampa_dataset(numero)
-            return jsonify(risposta.to_dict())  # per ritornare un dataframe si usa .to_dict()
-
+                risposta = self.ds_mg.stampa_dataset(numero = numero)
+            return jsonify({
+                "columns": risposta.columns.tolist(),
+                "data": risposta.to_dict(orient="records")
+            })
         @self.app.route('/analisi')
         def info():
             risp = self.ds_mg.analisi_complessiva()

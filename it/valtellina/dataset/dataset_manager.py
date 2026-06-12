@@ -47,7 +47,13 @@ class DatasetManager:
             head_df = self.__ds.head(numero)
             tail_df = self.__ds.tail(numero)
 
-            return pd.concat([head_df, tail_df])
+            print(len(head_df))  # 4
+            print(len(tail_df))  # 4
+
+            df = pd.concat([head_df, tail_df])
+            print(len(df))
+
+            return df
 
         return self.__ds
 
