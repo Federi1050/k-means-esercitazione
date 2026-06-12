@@ -62,6 +62,7 @@ class DatasetManager:
         corr = CreatoreGrafici.plot_correlation(self.__ds)
         corr_path = os.path.join(output_dir, "correlation.png")
         corr.savefig(corr_path, bbox_inches="tight")
+        plt.close(corr)
 
         # hist plots
         hist = []
@@ -86,5 +87,8 @@ class DatasetManager:
             "boxs": boxs,
             "correlation": corr
         }
+
+    def getDataset(self):
+        return self.__ds
 
 

@@ -1,4 +1,6 @@
 from it.valtellina.dataset.dataset_manager import DatasetManager
+from it.valtellina.machine_learning.k_cluster import KClusterModel
+
 
 class TestingTerminale:
 
@@ -20,7 +22,7 @@ class TestingTerminale:
         print()
 
         print("Stampa grafici")
-        ds_mg.stampa_grafici(output_dir="output_grafici/grafici_pre_cleaning")
+        #ds_mg.stampa_grafici(output_dir="output_grafici/grafici_pre_cleaning")
         print()
 
         print("Clening dei dati")
@@ -33,8 +35,21 @@ class TestingTerminale:
         print()
 
         print("Stampa grafici dopo cleaning")
-        ds_mg.stampa_grafici(output_dir="output_grafici/grafici_post_cleaning")
+        #ds_mg.stampa_grafici(output_dir="output_grafici/grafici_post_cleaning")
         print()
+
+        print("Creazione del grafico gomito per k-cluster")
+        KClusterModel.inerzie(ds_mg.getDataset())
+
+        print("Creazione modello k-cluster")
+        kcluster = KClusterModel(3, ds_mg.getDataset())
+        print()
+
+        print("Valutazione modello k-cluster")
+        val = kcluster.valutazione_modello()
+        print(val)
+        print()
+
 
     @staticmethod
     def stampa_analisi(analisi):
