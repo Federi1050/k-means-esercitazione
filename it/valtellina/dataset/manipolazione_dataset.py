@@ -147,6 +147,6 @@ class ManipolazioneDataset():
         # X_scaled_pca = pca.fit_transform(X_scaled)
 
         # ritorno come DataFrame
-        clean_df = pd.DataFrame(X_scaled)
+        clean_df = pd.DataFrame(X_scaled, columns=X.columns) # se si fa PCA togliere columns
 
         return clean_df, scaler, None # pca

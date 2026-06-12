@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from flask import Flask, jsonify, request, render_template_string
 from io import BytesIO
@@ -73,30 +74,21 @@ class FlaskManager():  # è una classe INTERFACCIA
         def dataset_show():
             input = request.get_json()
             numero = input.get('numero')
-            if numero is None:
+            if not numero:
                 risposta = self.ds_mg.stampa_dataset()
             else:
                 risposta = self.ds_mg.stampa_dataset(numero = numero)
-            return jsonify({
-                "columns": risposta.columns.tolist(),
-                "data": risposta.to_dict(orient="records")
-            })
+            return jsonify(risposta.to_dict(orient="records"))  # per ritornare un dataframe si usa .to_dict()
+
         @self.app.route('/analisi')
         def info():
             risp = self.ds_mg.analisi_complessiva()
-
-            def convert(obj):
-                if isinstance(obj, pd.Series):
-                    return obj.to_dict()
-                return obj
-
-            risp = {k: convert(v) for k, v in risp.items()}
-
+            risp = self.converti(risp)
             return jsonify(risp)
 
         @self.app.route('/grafici')
         def grafici():
-            grafici = self.ds_mg.stampa_grafici()
+            grafici = self.ds_mg.stampa_grafici("output_grafici/grafici_post_cleaning")
             figs = []
             for value in grafici.values():  # bisogna scomporre la scritta dall'immagine
                 if value is None:
@@ -133,11 +125,16 @@ class FlaskManager():  # è una classe INTERFACCIA
         @self.app.route('/grafico_gomito')
         def grafico_gomito():
             fig = KClusterModel.inerzie(self.ds_mg.getDataset())
+            img = BytesIO()
+            fig.savefig(img, format="png", bbox_inches="tight")
+            img.seek(0)
+            plt.close(fig)
+            encoded = base64.b64encode(img.getvalue()).decode()
             html = """
-                          <h1>Plots</h1>
-                          <img src="data:image/png;base64,{{ image }}" style="margin:10px;">
-                          """
-            return render_template_string(html, images=fig)
+                <h1>Plots</h1>
+                <img src="data:image/png;base64,{{ encoded }}" style="margin:10px;">
+            """
+            return render_template_string(html, encoded=encoded)
 
         @self.app.route('/val_kCluster')
         def valMod_kCluster():
@@ -147,17 +144,43 @@ class FlaskManager():  # è una classe INTERFACCIA
         @self.app.route('/previsione_kCluster', methods=['POST'])
         def previsione_kCluster():
             data = request.get_json()
-            obj = [
-                ('area', data.get('area')),
-                ('perimeter', data.get('perimeter')),
-                ('compactness', data.get('compactness')),
-                ('kernel_length', data.get('kernel_length')),
-                ('kernel_width', data.get('kernel_width')),
-                ('asymmetry', data.get('asymmetry')),
-                ('groove_length', data.get('groove_length'))
-            ]  # creando questo dizionario posso controllare che siano presenti tutti gli attributi necessari
-
+            obj = {
+                'area': data.get('area'),
+                'perimeter': data.get('perimeter'),
+                'compactness': data.get('compactness'),
+                'kernel_length': data.get('kernel_length'),
+                'kernel_width': data.get('kernel_width'),
+                'asymmetry': data.get('asymmetry'),
+                'groove_length': data.get('groove_length')
+            }  # creando questo dizionario posso controllare che siano presenti tutti gli attributi necessari
             pred = self.kclaster.classificazione(obj)
             print("PREDIZIONE:", pred)
 
-            return jsonify({"survived status": self.kclaster.classificazione(obj).tolist()})
+            return jsonify({"cluster numero": self.kclaster.classificazione(obj).tolist()})
+
+
+    def converti(self, obj):
+        # pandas
+        if isinstance(obj, pd.DataFrame):
+            return obj.to_dict(orient="records")
+
+        if isinstance(obj, pd.Series):
+            return obj.to_dict()
+
+        # numpy scalars
+        if isinstance(obj, np.generic):
+            return obj.item()
+
+        # dict
+        if isinstance(obj, dict):
+            return {k: self.converti(v) for k, v in obj.items()}
+
+        # list / tuple
+        if isinstance(obj, (list, tuple)):
+            return [self.converti(x) for x in obj]
+
+        # python native types (bool, int, float, str, None)
+        if isinstance(obj, (bool, int, float, str)) or obj is None:
+            return obj
+
+        return obj

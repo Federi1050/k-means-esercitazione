@@ -72,7 +72,7 @@ class KClusterModel:
         X_scaled_array = self.__scaler.transform(X)
         # X_scaled_pca = self.__pca.transform(X_scaled_array)
 
-        X_scaled_df = pd.DataFrame(X_scaled_array)
+        X_scaled_df = pd.DataFrame(X_scaled_array, columns=X.columns)
 
         # Predizione cluster
         cluster = self.__modello.predict(X_scaled_df)[0]
