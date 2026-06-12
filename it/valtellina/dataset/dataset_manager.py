@@ -39,7 +39,8 @@ class DatasetManager:
         }
 
     def cleaning(self):
-        self.__ds = ManipolazioneDataset.clean(self.__ds)
+        self.__ds, scaler = ManipolazioneDataset.clean(self.__ds)
+        return scaler
 
     def stampa_dataset(self, **kwargs):
         numero = kwargs.get("numero")

@@ -26,7 +26,8 @@ class TestingTerminale:
         print()
 
         print("Clening dei dati")
-        ds_mg.cleaning()
+        colonna_labels = ds_mg.getDataset()["class"]
+        scaler = ds_mg.cleaning()
         print()
 
         print("Analisi del dataset dopo cleaning")
@@ -39,17 +40,31 @@ class TestingTerminale:
         print()
 
         print("Creazione del grafico gomito per k-cluster")
-        KClusterModel.inerzie(ds_mg.getDataset())
+        # KClusterModel.inerzie(ds_mg.getDataset())
 
         print("Creazione modello k-cluster")
-        kcluster = KClusterModel(3, ds_mg.getDataset())
+        kcluster = KClusterModel(3, ds_mg.getDataset(), scaler)
         print()
 
         print("Valutazione modello k-cluster")
-        val = kcluster.valutazione_modello()
+        val = kcluster.valutazione_modello(colonna_labels, ds_mg.getDataset())
         print(val)
         print()
 
+        print("Raggruppamento del object")
+        sample = {
+            "area" : 20.03,
+            "perimeter" : 16.9,
+            "compactness" : 0.8811,
+            "kernel_length" : 6.493,
+            "kernel_width" : 3.857,
+            "asymmetry" : 3.063,
+            "groove_length" : 6.32
+        }
+        pred = kcluster.classificazione(sample)
+        print("valore aspettato : 2")
+        print(f"valore predetto : {pred}")
+        print()
 
     @staticmethod
     def stampa_analisi(analisi):

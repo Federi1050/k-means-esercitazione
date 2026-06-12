@@ -144,4 +144,4 @@ class ManipolazioneDataset():
         # 4. ritorno come DataFrame
         clean_df = pd.DataFrame(X_scaled, columns=X.columns)
 
-        return clean_df
+        return clean_df, scaler
