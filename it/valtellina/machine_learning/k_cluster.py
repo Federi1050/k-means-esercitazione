@@ -48,6 +48,7 @@ class KClusterModel:
         gomito_path = os.path.join("output_grafici", "gomito.png")
         fig.savefig(gomito_path, bbox_inches="tight")
         plt.close(fig)
+        return fig
 
     def valutazione_modello(self, colonna_labels_original,dataset):
         # siluette quanto performa

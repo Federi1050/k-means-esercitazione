@@ -10,9 +10,9 @@ class TestingTerminale:
         print()
 
         print("Stampa dataset")
-        ds_mg.stampa_dataset()
+        print(ds_mg.stampa_dataset())
         print()
-        ds_mg.stampa_dataset(numero=7)
+        print(ds_mg.stampa_dataset(numero=7))
         print()
 
         print("Analisi del dataset")

@@ -1,7 +1,7 @@
 from it.valtellina.interazioni_utente.flask_manager import FlaskManager
 from it.valtellina.interazioni_utente.testing_terminale import TestingTerminale
 
-testing = True
+testing = False
 
 if testing:
     TestingTerminale.test()

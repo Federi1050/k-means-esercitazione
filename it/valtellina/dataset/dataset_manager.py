@@ -1,4 +1,5 @@
 import os
+import pandas as pd
 from matplotlib import pyplot as plt
 from it.valtellina.dataset.creatore_grafici import CreatoreGrafici
 from it.valtellina.dataset.manipolazione_dataset import ManipolazioneDataset
@@ -43,13 +44,12 @@ class DatasetManager:
         numero = kwargs.get("numero")
 
         if numero is not None:
-            print(f"\nHEAD ({numero} righe):")
-            print(self.__ds.head(numero))
-            print(f"\nTAIL ({numero} righe):")
-            print(self.__ds.tail(numero))
-        else:
-            print("\nDATASET COMPLETO:")
-            print(self.__ds)
+            head_df = self.__ds.head(numero)
+            tail_df = self.__ds.tail(numero)
+
+            return pd.concat([head_df, tail_df])
+
+        return self.__ds
 
     def stampa_grafici(self, output_dir="output_grafici"):
         # se cartella non esiste creiamola
