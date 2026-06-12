@@ -1,10 +1,7 @@
 import os
-
 from matplotlib import pyplot as plt
-
 from it.valtellina.dataset.creatore_grafici import CreatoreGrafici
 from it.valtellina.dataset.manipolazione_dataset import ManipolazioneDataset
-
 
 class DatasetManager:
     def __init__(self):
@@ -39,8 +36,8 @@ class DatasetManager:
         }
 
     def cleaning(self):
-        self.__ds, scaler = ManipolazioneDataset.clean(self.__ds)
-        return scaler
+        self.__ds, scaler, pca = ManipolazioneDataset.clean(self.__ds)
+        return scaler, pca
 
     def stampa_dataset(self, **kwargs):
         numero = kwargs.get("numero")
@@ -48,7 +45,6 @@ class DatasetManager:
         if numero is not None:
             print(f"\nHEAD ({numero} righe):")
             print(self.__ds.head(numero))
-
             print(f"\nTAIL ({numero} righe):")
             print(self.__ds.tail(numero))
         else:
@@ -91,5 +87,3 @@ class DatasetManager:
 
     def getDataset(self):
         return self.__ds
-
-

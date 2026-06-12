@@ -31,4 +31,3 @@ class CreatoreGrafici():
         plt.title(f"Boxplot di {col}")
         # plt.show()
         return fig
-

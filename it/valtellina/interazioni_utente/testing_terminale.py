@@ -1,7 +1,6 @@
 from it.valtellina.dataset.dataset_manager import DatasetManager
 from it.valtellina.machine_learning.k_cluster import KClusterModel
 
-
 class TestingTerminale:
 
     @staticmethod
@@ -27,7 +26,7 @@ class TestingTerminale:
 
         print("Clening dei dati")
         colonna_labels = ds_mg.getDataset()["class"]
-        scaler = ds_mg.cleaning()
+        scaler, pca = ds_mg.cleaning()
         print()
 
         print("Analisi del dataset dopo cleaning")
@@ -43,7 +42,7 @@ class TestingTerminale:
         # KClusterModel.inerzie(ds_mg.getDataset())
 
         print("Creazione modello k-cluster")
-        kcluster = KClusterModel(3, ds_mg.getDataset(), scaler)
+        kcluster = KClusterModel(3, ds_mg.getDataset(), scaler, pca)
         print()
 
         print("Valutazione modello k-cluster")

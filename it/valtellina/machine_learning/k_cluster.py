@@ -4,17 +4,17 @@ import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score, adjusted_rand_score
 
-
 class KClusterModel:
-    def __init__(self, numero_cluster, dataset, scaler):
+    def __init__(self, numero_cluster, dataset, scaler, pca):
         self.__scaler = scaler
+        self.__pca = pca
         self.__modello = self.creazione_modello(numero_cluster, dataset)
 
     def creazione_modello(self, numero_cluster, dataset):
         modello = KMeans(
             n_clusters=numero_cluster,
             random_state=42,
-            n_init="auto",
+            n_init=10, # numero di centroidi che calcola
             max_iter = 1000
         )
         modello.fit(dataset)
@@ -24,7 +24,6 @@ class KClusterModel:
     def inerzie(data, k_max=11):
         """
             Usa il metodo del gomito per determinare il numero ottimale di cluster.
-
             Parametri:
             - X: dataset (array o dataframe)
             - k_max: numero massimo di cluster da testare
@@ -59,26 +58,22 @@ class KClusterModel:
         # visto che abbiamo le labels originali
         ari = adjusted_rand_score(colonna_labels_original, labels)
 
-        # prendendo ultima colonna dataset vedere quanti corrispondenti
-        # visto che abbiamo le labels originali
-
         return {
             "silhuette_score": score_silhuette,
             "ARI" : ari
         }
 
     def classificazione(self, input_data):
-        # 1. Converti dict -> array 2D
+        # Converti dict -> array 2D
         X = pd.DataFrame([input_data])
 
-        # 2. Scaling
+        # Scaling
         X_scaled_array = self.__scaler.transform(X)
+        # X_scaled_pca = self.__pca.transform(X_scaled_array)
 
-        X_scaled_df = pd.DataFrame(X_scaled_array, columns=X.columns)
+        X_scaled_df = pd.DataFrame(X_scaled_array)
 
-        # 3. Predizione cluster
+        # Predizione cluster
         cluster = self.__modello.predict(X_scaled_df)[0]
 
         return cluster
-
-

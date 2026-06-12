@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from scipy.stats import zscore, shapiro, normaltest
+from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
 class ManipolazioneDataset():
@@ -131,17 +132,21 @@ class ManipolazioneDataset():
 
     @staticmethod
     def clean(data):
-        # 1. rimuove duplicati
+        # rimuove duplicati
         data = data.drop_duplicates()
 
-        # 2. separa features (ultima colonna = class/grouping)
+        # separa features (ultima colonna = class/grouping)
         X = data.iloc[:, :-1]
 
-        # 3. scaling
+        # scaling
         scaler = StandardScaler()
         X_scaled = scaler.fit_transform(X)
 
-        # 4. ritorno come DataFrame
-        clean_df = pd.DataFrame(X_scaled, columns=X.columns)
+        # PCA, non utile in questo caso visto che non migliora nettamente nella maggior partre dei casi
+        # pca = PCA(n_components=0.95)
+        # X_scaled_pca = pca.fit_transform(X_scaled)
 
-        return clean_df, scaler
+        # ritorno come DataFrame
+        clean_df = pd.DataFrame(X_scaled)
+
+        return clean_df, scaler, None # pca
